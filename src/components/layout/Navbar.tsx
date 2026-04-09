@@ -43,12 +43,23 @@ export default function Navbar() {
         )}
 
         {/* Right */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Mobile menu toggle (Swapped to be more central/left of profile) */}
+          {user && (
+            <button 
+              onClick={() => setMobileOpen(!mobileOpen)} 
+              className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              aria-label="Toggle Menu"
+            >
+              {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          )}
+
           {user ? (
             <div className="relative">
               <button
                 onClick={() => setProfileOpen(!profileOpen)}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-blue-50 transition-colors"
+                className="flex items-center gap-2 px-2 sm:px-3 py-1.5 rounded-lg hover:bg-blue-50 transition-colors"
               >
                 <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
                   <User size={16} className="text-blue-600" />
@@ -81,13 +92,6 @@ export default function Navbar() {
                 Sign Up
               </Link>
             </div>
-          )}
-
-          {/* Mobile menu toggle */}
-          {user && (
-            <button onClick={() => setMobileOpen(!mobileOpen)} className="md:hidden p-2 rounded-lg hover:bg-gray-100">
-              {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-            </button>
           )}
         </div>
       </div>
