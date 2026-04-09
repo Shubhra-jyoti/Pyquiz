@@ -1,0 +1,195 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  email        String?  @unique
+  passwordHash String
+  displayName  String?
+  role         String   @default("STUDENT")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  quizAttempts QuizAttempt[]
+  submissions  Submission[]
+  bookmarks    Bookmark[]
+  progress     ProgressSnapshot[]
+  reviewLogs   AdminReviewLog[]
+}
+
+model Chapter {
+  id            Int    @id
+  number        Int    @unique
+  title         String
+  termExam      Int
+  questionCount Int    @default(0)
+  mcqCount      Int    @default(0)
+  codingCount   Int    @default(0)
+  theoryCount   Int    @default(0)
+
+  questions Question[]
+  progress  ProgressSnapshot[]
+}
+
+model Question {
+  id            String  @id @default(cuid())
+  srNo          Int
+  chapterId     Int
+  type          String
+  questionText  String
+  marks         Int     @default(1)
+  previousYear  String?
+  difficulty    String?
+  published     Boolean @default(true)
+  confidence    Float   @default(1.0)
+  rawExtracted  String?
+  pageNumber    Int     @default(0)
+  tags          String?
+
+  chapter       Chapter          @relation(fields: [chapterId], references: [id])
+  options       MCQOption[]
+  verification  MCQVerification?
+  submissions   Submission[]
+  bookmarks     Bookmark[]
+  quizResponses QuizResponse[]
+
+  @@index([chapterId])
+  @@index([type])
+  @@index([srNo])
+}
+
+model MCQOption {
+  id         String  @id @default(cuid())
+  questionId String
+  label      String
+  text       String
+  isCorrect  Boolean @default(false)
+
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([questionId])
+}
+
+model MCQVerification {
+  id               String   @id @default(cuid())
+  questionId       String   @unique
+  bookAnswer       String
+  aiVerification   String   @default("PENDING")
+  aiExplanation    String?
+  adminApproved    Boolean  @default(false)
+  adminFinalAnswer String?
+  reviewedAt       DateTime?
+  reviewedBy       String?
+
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
+
+model Submission {
+  id             String   @id @default(cuid())
+  userId         String
+  questionId     String
+  code           String?
+  output         String?
+  isCorrect      Boolean?
+  selectedOption String?
+  aiFeedback     String?
+  aiScore        Float?
+  timeTaken      Int?
+  attemptNumber  Int      @default(1)
+  createdAt      DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id])
+  question Question @relation(fields: [questionId], references: [id])
+
+  @@index([userId])
+  @@index([questionId])
+}
+
+model QuizAttempt {
+  id             String    @id @default(cuid())
+  userId         String
+  mode           String
+  chapterId      Int?
+  termExam       Int?
+  totalQuestions Int
+  correctCount   Int       @default(0)
+  score          Float     @default(0)
+  timeTaken      Int?
+  timed          Boolean   @default(false)
+  timeLimit      Int?
+  completedAt    DateTime?
+  createdAt      DateTime  @default(now())
+
+  user      User           @relation(fields: [userId], references: [id])
+  responses QuizResponse[]
+
+  @@index([userId])
+}
+
+model QuizResponse {
+  id             String  @id @default(cuid())
+  attemptId      String
+  questionId     String
+  selectedOption String?
+  isCorrect      Boolean @default(false)
+  timeTaken      Int?
+
+  attempt  QuizAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question Question    @relation(fields: [questionId], references: [id])
+
+  @@index([attemptId])
+}
+
+model ProgressSnapshot {
+  id             String   @id @default(cuid())
+  userId         String
+  chapterId      Int
+  mcqAccuracy    Float    @default(0)
+  codingAccuracy Float    @default(0)
+  totalAttempted Int      @default(0)
+  totalCorrect   Int      @default(0)
+  streak         Int      @default(0)
+  lastPracticed  DateTime?
+  mastery        Float    @default(0)
+  updatedAt      DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id])
+  chapter Chapter @relation(fields: [chapterId], references: [id])
+
+  @@unique([userId, chapterId])
+  @@index([userId])
+}
+
+model Bookmark {
+  id         String   @id @default(cuid())
+  userId     String
+  questionId String
+  note       String?
+  createdAt  DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id])
+  question Question @relation(fields: [questionId], references: [id])
+
+  @@unique([userId, questionId])
+  @@index([userId])
+}
+
+model AdminReviewLog {
+  id         String   @id @default(cuid())
+  adminId    String
+  questionId String?
+  action     String
+  details    String?
+  createdAt  DateTime @default(now())
+
+  admin User @relation(fields: [adminId], references: [id])
+
+  @@index([adminId])
+}

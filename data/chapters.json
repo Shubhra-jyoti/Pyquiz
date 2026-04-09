@@ -1,0 +1,102 @@
+[
+  {
+    "id": 1,
+    "number": 1,
+    "title": "Pandas - Data Cleaning & Manipulation",
+    "termExam": 1,
+    "questionCount": 79,
+    "mcqCount": 54,
+    "codingCount": 24,
+    "theoryCount": 1
+  },
+  {
+    "id": 2,
+    "number": 2,
+    "title": "Data Visualization",
+    "termExam": 1,
+    "questionCount": 77,
+    "mcqCount": 56,
+    "codingCount": 21,
+    "theoryCount": 0
+  },
+  {
+    "id": 3,
+    "number": 3,
+    "title": "NumPy & Data Processing",
+    "termExam": 1,
+    "questionCount": 22,
+    "mcqCount": 19,
+    "codingCount": 3,
+    "theoryCount": 0
+  },
+  {
+    "id": 4,
+    "number": 4,
+    "title": "Machine Learning Basics",
+    "termExam": 2,
+    "questionCount": 35,
+    "mcqCount": 21,
+    "codingCount": 14,
+    "theoryCount": 0
+  },
+  {
+    "id": 5,
+    "number": 5,
+    "title": "ML Algorithms (kNN, SVM, Decision Trees)",
+    "termExam": 2,
+    "questionCount": 84,
+    "mcqCount": 67,
+    "codingCount": 17,
+    "theoryCount": 0
+  },
+  {
+    "id": 6,
+    "number": 6,
+    "title": "Deep Learning & Keras",
+    "termExam": 2,
+    "questionCount": 17,
+    "mcqCount": 15,
+    "codingCount": 2,
+    "theoryCount": 0
+  },
+  {
+    "id": 7,
+    "number": 7,
+    "title": "Web Scraping & APIs",
+    "termExam": 3,
+    "questionCount": 64,
+    "mcqCount": 37,
+    "codingCount": 27,
+    "theoryCount": 0
+  },
+  {
+    "id": 8,
+    "number": 8,
+    "title": "Django Basics",
+    "termExam": 3,
+    "questionCount": 34,
+    "mcqCount": 22,
+    "codingCount": 12,
+    "theoryCount": 0
+  },
+  {
+    "id": 9,
+    "number": 9,
+    "title": "Django Forms & Authentication",
+    "termExam": 4,
+    "questionCount": 28,
+    "mcqCount": 21,
+    "codingCount": 7,
+    "theoryCount": 0
+  },
+  {
+    "id": 10,
+    "number": 10,
+    "title": "Django REST Framework",
+    "termExam": 4,
+    "questionCount": 63,
+    "mcqCount": 54,
+    "codingCount": 9,
+    "theoryCount": 0
+  }
+]
