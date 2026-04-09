@@ -53,43 +53,49 @@ Hi Shubhra! Since we are using an SQLite database with Prisma, deploying to serv
 
 Follow these exact steps to deploy PyQuiz on Render:
 
-### 1. Create a Web Service
-1. Push your full repository to GitHub.
-2. In your Render Dashboard, click **New+** -> **Web Service**.
-3. Connect your GitHub repository.
-4. Configure the following basic settings:
+### 1. Set Up Your Free Database (Neon.tech)
+1. Go to **[Neon.tech](https://neon.tech)** and sign up for a free account.
+2. Create a new project (e.g., `pyquiz-db`).
+3. Neon will immediately give you a connection string that looks like this:
+   `postgresql://username:password@ep-old-water-123.us-east-2.aws.neon.tech/neondb?sslmode=require`
+4. Copy this string. This is your permanent Database URL!
+
+### 2. Prepare the Code
+1. Open your terminal in VS Code and push these latest changes up to GitHub! Let Git know we switched to PostgreSQL:
+   ```bash
+   git add .
+   git commit -m "Switched to PostgreSQL"
+   git push
+   ```
+
+### 3. Deploy to Render
+1. Go to your **Render Dashboard** -> **New+** -> **Web Service**.
+2. Connect your GitHub repository.
+3. Configure the following basic settings:
    - **Environment:** `Node`
    - **Build Command:** `bash build.sh`
    - **Start Command:** `npx prisma migrate deploy && npm start`
 
-### 2. Add a Persistent Disk (Crucial!)
-1. Scroll down to the **Advanced** section.
-2. Click **Add Disk**.
-3. Set the following details:
-   - **Name:** database_disk
-   - **Mount Path:** `/data`
-   - **Size:** 1 GB (Free tier compatible)
-
-### 3. Add Environment Variables
-Under the **Environment Variables** section, add the following variables:
+### 4. Add Environment Variables
+Under the **Environment Variables** section on Render, add these 4 variables:
 
 | Key | Value | Purpose |
 |-----|-------|---------|
-| `DATABASE_URL` | `file:/data/pyquiz.db` | Points Prisma to the persistent disk! |
+| `DATABASE_URL` | `postgresql://...` *(Paste your Neon.tech URL here!)* | Connects the app to your free cloud database. |
 | `NEXTAUTH_SECRET` | `[generate a random string]` | Security key for logins. |
 | `NEXTAUTH_URL` | `https://your-render-url.onrender.com` | Your live website URL. |
 | `GEMINI_API_KEY` | `your_google_ai_key` | Required for AI MCQs & Code Reviews. |
 
-### 4. Deploy & Seed
-Click **Create Web Service**. Render will now run `build.sh` and start your app.
+### 5. Deploy & Seed
+Click **Create Web Service**. Render will now run `build.sh` and connect to your Neon database!
 
-Once your app is successfully running, the database will be created but totally empty. We need to populate it with all 538 questions:
+Once it finishes building and is live, the database will be fully connected but completely empty. We need to populate it:
 1. In the Render Dashboard for your web service, click on the **Shell** tab (on the left menu).
 2. Type and run the following command to securely seed your production database:
    ```bash
    npm run seed
    ```
-3. Your platform is now fully deployed and populated!
+3. Your platform is now fully deployed, and your student data will be saved permanently for free!
 
 ---
 
