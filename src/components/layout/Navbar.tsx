@@ -94,8 +94,8 @@ export default function Navbar() {
 
       {/* Mobile Nav */}
       {mobileOpen && user && (
-        <div className="md:hidden bg-white border-b border-[var(--border)] shadow-lg fade-in">
-          <div className="px-4 py-2 space-y-1">
+        <div className="md:hidden absolute top-16 left-0 right-0 bg-white border-b border-[var(--border)] shadow-xl fade-in overflow-y-auto max-h-[calc(100vh-4rem)]">
+          <div className="px-4 py-3 space-y-1">
             <MobileNavLink href="/dashboard" icon={<LayoutDashboard size={18} />} label="Dashboard" onClick={() => setMobileOpen(false)} />
             <MobileNavLink href="/quiz/setup" icon={<BookOpen size={18} />} label="Practice" onClick={() => setMobileOpen(false)} />
             <MobileNavLink href="/practice/coding" icon={<Code2 size={18} />} label="Coding" onClick={() => setMobileOpen(false)} />

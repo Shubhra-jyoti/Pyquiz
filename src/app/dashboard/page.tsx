@@ -48,16 +48,16 @@ export default function DashboardPage() {
   if (loading || !user) return <LoadingSkeleton />;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 relative">
+    <div className="max-w-7xl mx-auto px-4 py-4 md:py-8 relative">
       <div className="absolute top-0 right-0 w-96 h-96 bg-blue-400/20 rounded-full blur-[100px] -z-10 pointer-events-none" />
       <div className="absolute top-40 left-0 w-72 h-72 bg-purple-400/20 rounded-full blur-[100px] -z-10 pointer-events-none" />
 
       {/* Welcome */}
-      <div className="mb-10">
-        <h1 className="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-600 tracking-tight">
+      <div className="mb-6 md:mb-10">
+        <h1 className="text-2xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-600 tracking-tight">
           Welcome back, {user.displayName || user.username}!
         </h1>
-        <p className="text-gray-500 mt-2 font-medium">Ready to smash your Python goals today?</p>
+        <p className="text-sm md:text-base text-gray-500 mt-1 md:mt-2 font-medium">Ready to smash your Python goals?</p>
       </div>
 
       {/* Quick Actions */}
@@ -69,45 +69,45 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-8 md:mb-12">
-        <StatCard icon={<Target size={22} />} label="Overall Accuracy" value={`${(data?.overallAccuracy || 0).toFixed(1)}%`} color="blue" />
-        <StatCard icon={<BookOpen size={22} />} label="Questions Done" value={String(data?.totalAttempted || 0)} color="emerald" />
-        <StatCard icon={<Trophy size={22} />} label="Quizzes Taken" value={String(data?.totalQuizzes || 0)} color="amber" />
-        <StatCard icon={<TrendingUp size={22} />} label="Correct Answers" value={String(data?.totalCorrect || 0)} color="purple" />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-8 md:mb-12">
+        <StatCard icon={<Target size={22} />} label="Accuracy" value={`${(data?.overallAccuracy || 0).toFixed(1)}%`} color="blue" />
+        <StatCard icon={<BookOpen size={22} />} label="Done" value={String(data?.totalAttempted || 0)} color="emerald" />
+        <StatCard icon={<Trophy size={22} />} label="Quizzes" value={String(data?.totalQuizzes || 0)} color="amber" />
+        <StatCard icon={<TrendingUp size={22} />} label="Correct" value={String(data?.totalCorrect || 0)} color="purple" />
       </div>
 
       <div className="grid lg:grid-cols-3 gap-8">
         {/* Chapter Progress */}
         <div className="lg:col-span-2">
-          <div className="bg-white/80 backdrop-blur-xl rounded-3xl border border-white/40 shadow-xl shadow-gray-200/40 p-8">
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-xl font-bold text-gray-800">Chapter Progress</h2>
-              <Link href="/progress" className="text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors flex items-center gap-1 group">
-                View All <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+          <div className="bg-white/80 backdrop-blur-xl rounded-3xl border border-white/40 shadow-xl shadow-gray-200/40 p-5 md:p-8">
+            <div className="flex items-center justify-between mb-6 md:mb-8">
+              <h2 className="text-lg md:text-xl font-bold text-gray-800">Chapter Progress</h2>
+              <Link href="/progress" className="text-xs md:text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors flex items-center gap-1 group">
+                View All <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               {chapters.map((ch) => {
                 const prog = data?.progress?.find((p: any) => p.chapterId === ch.id);
                 const mastery = prog?.mastery || 0;
                 return (
                   <div key={ch.id} className="relative group">
-                    <div className="flex items-center gap-5 p-4 rounded-2xl bg-gray-50/50 hover:bg-white border border-transparent hover:border-blue-100 hover:shadow-lg hover:shadow-blue-500/5 transition-all duration-300">
-                      <div className="w-12 h-12 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl flex items-center justify-center text-blue-600 font-bold shadow-inner">
+                    <div className="flex items-center gap-3 md:gap-5 p-3 md:p-4 rounded-xl md:rounded-2xl bg-gray-50/50 hover:bg-white border border-transparent hover:border-blue-100 hover:shadow-lg hover:shadow-blue-500/5 transition-all duration-300">
+                      <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg md:rounded-xl flex items-center justify-center text-blue-600 font-bold shadow-inner text-sm md:text-base">
                         {ch.number}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-2">
-                          <p className="text-sm font-semibold text-gray-800 truncate">{ch.title}</p>
-                          <span className="text-xs font-bold text-indigo-400 bg-indigo-50 px-2 py-1 rounded-md">Term {ch.termExam}</span>
+                        <div className="flex items-center justify-between mb-1.5 md:mb-2">
+                          <p className="text-xs md:text-sm font-semibold text-gray-800 truncate">{ch.title}</p>
+                          <span className="text-[10px] md:text-xs font-bold text-indigo-400 bg-indigo-50 px-1.5 py-0.5 rounded-md">Term {ch.termExam}</span>
                         </div>
-                        <div className="w-full h-1.5 md:h-2.5 bg-gray-100/80 rounded-full overflow-hidden shadow-inner">
+                        <div className="w-full h-1 md:h-2 bg-gray-100/80 rounded-full overflow-hidden shadow-inner">
                           <div className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-1000 ease-out relative" style={{ width: `${mastery}%` }}>
                              <div className="absolute top-0 right-0 bottom-0 left-0 bg-white/20 animate-pulse" />
                           </div>
                         </div>
                       </div>
-                      <span className="text-base font-bold text-gray-700 w-14 text-right">{mastery.toFixed(0)}%</span>
+                      <span className="text-xs md:text-base font-bold text-gray-700 w-10 md:w-14 text-right">{mastery.toFixed(0)}%</span>
                     </div>
                   </div>
                 );
