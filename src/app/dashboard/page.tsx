@@ -48,9 +48,12 @@ export default function DashboardPage() {
   if (loading || !user) return <LoadingSkeleton />;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-4 md:py-8 relative overflow-x-hidden">
-      <div className="absolute top-0 right-0 w-96 h-96 bg-blue-400/20 rounded-full blur-[100px] -z-10 pointer-events-none" />
-      <div className="absolute top-40 left-0 w-72 h-72 bg-purple-400/20 rounded-full blur-[100px] -z-10 pointer-events-none" />
+    <div className="max-w-7xl mx-auto px-4 py-4 md:py-8 relative">
+      {/* Background Blobs - Isolated to prevent page overflow while allowing natural scrolling */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-400/20 rounded-full blur-[100px]" />
+        <div className="absolute top-40 left-0 w-72 h-72 bg-purple-400/20 rounded-full blur-[100px]" />
+      </div>
 
       {/* Welcome */}
       <div className="mb-6 md:mb-10">
@@ -92,22 +95,31 @@ export default function DashboardPage() {
                 const mastery = prog?.mastery || 0;
                 return (
                   <div key={ch.id} className="relative group">
-                    <div className="flex items-center gap-3 md:gap-5 p-3 md:p-4 rounded-xl md:rounded-2xl bg-gray-50/50 hover:bg-white border border-transparent hover:border-blue-100 hover:shadow-lg hover:shadow-blue-500/5 transition-all duration-300">
-                      <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg md:rounded-xl flex items-center justify-center text-blue-600 font-bold shadow-inner text-sm md:text-base">
-                        {ch.number}
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 md:gap-5 p-3 md:p-4 rounded-xl md:rounded-2xl bg-gray-50/50 hover:bg-white border border-transparent hover:border-blue-100 hover:shadow-lg hover:shadow-blue-500/5 transition-all duration-300">
+                      <div className="flex items-center gap-3 sm:block">
+                        <div className="w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg md:rounded-xl flex items-center justify-center text-blue-600 font-bold shadow-inner text-xs sm:text-base flex-shrink-0">
+                          {ch.number}
+                        </div>
+                        <div className="sm:hidden flex-1 min-w-0">
+                          <p className="text-xs font-bold text-gray-800 truncate">{ch.title}</p>
+                        </div>
+                        <span className="sm:hidden text-[10px] font-bold text-indigo-400 bg-indigo-50 px-1.5 py-0.5 rounded-md">T{ch.termExam}</span>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-1.5 md:mb-2">
+                      
+                      <div className="flex-1 min-w-0 space-y-1.5 md:space-y-2">
+                        <div className="hidden sm:flex items-center justify-between">
                           <p className="text-xs md:text-sm font-semibold text-gray-800 truncate">{ch.title}</p>
                           <span className="text-[10px] md:text-xs font-bold text-indigo-400 bg-indigo-50 px-1.5 py-0.5 rounded-md">Term {ch.termExam}</span>
                         </div>
-                        <div className="w-full h-1 md:h-2 bg-gray-100/80 rounded-full overflow-hidden shadow-inner">
-                          <div className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-1000 ease-out relative" style={{ width: `${mastery}%` }}>
-                             <div className="absolute top-0 right-0 bottom-0 left-0 bg-white/20 animate-pulse" />
+                        <div className="flex items-center gap-3">
+                          <div className="flex-1 h-1.5 md:h-2.5 bg-gray-100/80 rounded-full overflow-hidden shadow-inner">
+                            <div className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-1000 ease-out relative" style={{ width: `${mastery}%` }}>
+                               <div className="absolute top-0 right-0 bottom-0 left-0 bg-white/20 animate-pulse" />
+                            </div>
                           </div>
+                          <span className="text-xs md:text-base font-bold text-gray-700 w-10 md:w-14 text-right">{mastery.toFixed(0)}%</span>
                         </div>
                       </div>
-                      <span className="text-xs md:text-base font-bold text-gray-700 w-10 md:w-14 text-right">{mastery.toFixed(0)}%</span>
                     </div>
                   </div>
                 );
