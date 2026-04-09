@@ -61,7 +61,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8 md:mb-12">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8 md:mb-10">
         <QuickAction href="/quiz/setup" icon={<BookOpen size={24} />} label="Start Quiz" gradient="from-blue-500 to-blue-600" shadow="shadow-blue-500/30" />
         <QuickAction href="/practice/coding" icon={<Code2 size={24} />} label="Code Practice" gradient="from-indigo-500 to-purple-600" shadow="shadow-indigo-500/30" />
         <QuickAction href="/progress" icon={<BarChart3 size={24} />} label="Full Progress" gradient="from-emerald-500 to-green-600" shadow="shadow-emerald-500/30" />
@@ -69,7 +69,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8 md:mb-12">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-8 md:mb-12">
         <StatCard icon={<Target size={22} />} label="Overall Accuracy" value={`${(data?.overallAccuracy || 0).toFixed(1)}%`} color="blue" />
         <StatCard icon={<BookOpen size={22} />} label="Questions Done" value={String(data?.totalAttempted || 0)} color="emerald" />
         <StatCard icon={<Trophy size={22} />} label="Quizzes Taken" value={String(data?.totalQuizzes || 0)} color="amber" />
