@@ -17,85 +17,40 @@ A full-stack quiz and coding practice platform for college Python-II (Sem IV) ex
 - **Secure Auth**: JWT-based authentication with bcrypt password hashing
 - **Blue & White Theme**: Clean, professional, responsive UI
 
-## Quick Start
+## Getting Started
 
-### Prerequisites
-- Node.js 18+ 
-- npm
+### Local Development Setup
 
-### Setup
+To run PyQuiz on your local machine:
 
 ```bash
-# Navigate to the project
-cd pyquiz
+# 1. Clone the repository
+git clone https://github.com/Shubhra-jyoti/Pyquiz.git
+cd Pyquiz
 
-# Install dependencies
+# 2. Install dependencies
 npm install
 
-# Generate Prisma client
-npx prisma generate
+# 3. Apply the database schema
+npx prisma db push --accept-data-loss
 
-# Run database migrations
-npx prisma migrate dev
-
-# Seed the database (503 questions + demo users)
+# 4. Seed the database with Practice Book content
 npm run seed
 
-# Start dev server
+# 5. Start the local server
 npm run dev
 ```
 
 Open **http://localhost:3000** in your browser.
 
-## Deployment to Render.com
+## Cloud Deployment (Render / Vercel)
 
-Hi Shubhra! Since we are using an SQLite database with Prisma, deploying to services like Render requires configuring a **Persistent Disk**. Otherwise, your database will be wiped every time the server restarts.
-
-Follow these exact steps to deploy PyQuiz on Render:
-
-### 1. Set Up Your Free Database (Neon.tech)
-1. Go to **[Neon.tech](https://neon.tech)** and sign up for a free account.
-2. Create a new project (e.g., `pyquiz-db`).
-3. Neon will immediately give you a connection string that looks like this:
-   `postgresql://username:password@ep-old-water-123.us-east-2.aws.neon.tech/neondb?sslmode=require`
-4. Copy this string. This is your permanent Database URL!
-
-### 2. Prepare the Code
-1. Open your terminal in VS Code and push these latest changes up to GitHub! Let Git know we switched to PostgreSQL:
-   ```bash
-   git add .
-   git commit -m "Switched to PostgreSQL"
-   git push
-   ```
-
-### 3. Deploy to Render
-1. Go to your **Render Dashboard** -> **New+** -> **Web Service**.
-2. Connect your GitHub repository.
-3. Configure the following basic settings:
-   - **Environment:** `Node`
-   - **Build Command:** `bash build.sh`
-   - **Start Command:** `npx prisma migrate deploy && npm start`
-
-### 4. Add Environment Variables
-Under the **Environment Variables** section on Render, add these 4 variables:
-
-| Key | Value | Purpose |
-|-----|-------|---------|
-| `DATABASE_URL` | `postgresql://...` *(Paste your Neon.tech URL here!)* | Connects the app to your free cloud database. |
-| `NEXTAUTH_SECRET` | `[generate a random string]` | Security key for logins. |
-| `NEXTAUTH_URL` | `https://your-render-url.onrender.com` | Your live website URL. |
-| `GEMINI_API_KEY` | `your_google_ai_key` | Required for AI MCQs & Code Reviews. |
-
-### 5. Deploy & Seed
-Click **Create Web Service**. Render will now run `build.sh` and connect to your Neon database!
-
-Once it finishes building and is live, the database will be fully connected but completely empty. We need to populate it:
-1. In the Render Dashboard for your web service, click on the **Shell** tab (on the left menu).
-2. Type and run the following command to securely seed your production database:
-   ```bash
-   npm run seed
-   ```
-3. Your platform is now fully deployed, and your student data will be saved permanently for free!
+This application uses a PostgreSQL database. To deploy it to a platform like Render:
+1. Create a free PostgreSQL database (e.g., using Neon.tech or Supabase).
+2. Set the `DATABASE_URL` environment variable to your new database string.
+3. Configure your Build Command: `bash build.sh`
+4. Configure your Start Command: `npm start`
+5. Make sure to define `NEXTAUTH_SECRET`, `NEXTAUTH_URL`, and `GEMINI_API_KEY` for secure operations.
 
 ---
 
