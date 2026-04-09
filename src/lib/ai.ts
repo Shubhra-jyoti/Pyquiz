@@ -21,8 +21,24 @@ async function withRetry<T>(fn: () => Promise<T>, retries = 2, delayMs = 1000): 
   throw new Error('Retry exhausted');
 }
 
+// Rate Limiting: Groq's Free Tier allows ~30 Requests Per Minute
+// We enforce a strict 2000ms delay between API calls to prevent 429 bursts.
+let lastCallTime = 0;
+const RPM_LIMIT_MS = 2000;
+
+async function rateLimitGroq() {
+  const now = Date.now();
+  const waitTime = Math.max(0, lastCallTime + RPM_LIMIT_MS - now);
+  lastCallTime = now + waitTime;
+  if (waitTime > 0) {
+    await new Promise(r => setTimeout(r, waitTime));
+  }
+}
+
 async function askGroq(prompt: string, temperature = 0.3): Promise<string> {
   if (!GROQ_API_KEY) throw new Error('GROQ_API_KEY not set in environment variables');
+
+  await rateLimitGroq();
 
   const res = await fetch(GROQ_URL, {
     method: 'POST',
