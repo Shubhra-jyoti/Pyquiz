@@ -33,7 +33,7 @@ export default function RegisterPage() {
     setLoading(true);
     const result = await register(username, password, email || undefined);
     if (result.success) {
-      router.push('/dashboard');
+      window.location.href = '/dashboard';
     } else {
       setError(result.error || 'Registration failed');
     }
