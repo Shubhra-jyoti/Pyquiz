@@ -101,7 +101,7 @@ export default function DashboardPage() {
                           <p className="text-sm font-semibold text-gray-800 truncate">{ch.title}</p>
                           <span className="text-xs font-bold text-indigo-400 bg-indigo-50 px-2 py-1 rounded-md">Term {ch.termExam}</span>
                         </div>
-                        <div className="w-full h-2.5 bg-gray-100/80 rounded-full overflow-hidden shadow-inner">
+                        <div className="w-full h-1.5 md:h-2.5 bg-gray-100/80 rounded-full overflow-hidden shadow-inner">
                           <div className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-1000 ease-out relative" style={{ width: `${mastery}%` }}>
                              <div className="absolute top-0 right-0 bottom-0 left-0 bg-white/20 animate-pulse" />
                           </div>
@@ -131,7 +131,7 @@ export default function DashboardPage() {
                       <span className="font-semibold text-gray-700">Term {t}</span>
                       <span className="font-bold text-gray-900">{readiness.toFixed(0)}%</span>
                     </div>
-                    <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden shadow-inner">
+                    <div className="w-full h-2 md:h-3 bg-gray-100 rounded-full overflow-hidden shadow-inner">
                       <div className={`h-full bg-gradient-to-r ${colors} rounded-full transition-all duration-1000`} style={{ width: `${readiness}%` }} />
                     </div>
                   </div>
@@ -173,13 +173,13 @@ export default function DashboardPage() {
 
 function QuickAction({ href, icon, label, gradient, shadow }: { href: string; icon: React.ReactNode; label: string; gradient: string; shadow: string }) {
   return (
-    <Link href={href} className={`relative overflow-hidden bg-gradient-to-br ${gradient} text-white rounded-2xl p-5 md:p-6 flex flex-col items-center justify-center gap-3 transition-all duration-300 hover:-translate-y-1 shadow-lg ${shadow} group`}>
+    <Link href={href} className={`relative overflow-hidden bg-gradient-to-br ${gradient} text-white rounded-xl md:rounded-2xl p-3 sm:p-5 md:p-6 flex flex-col items-center justify-center gap-1.5 sm:gap-3 transition-all duration-300 hover:-translate-y-1 shadow-md sm:shadow-lg ${shadow} group`}>
       <div className="absolute top-0 left-0 w-full h-full bg-white/0 group-hover:bg-white/10 transition-colors" />
-      <div className="transform transition-transform group-hover:scale-110 group-hover:rotate-3 duration-300">
+      <div className="transform transition-transform group-hover:scale-110 group-hover:rotate-3 duration-300 scale-75 sm:scale-100">
         {icon}
       </div>
-      <span className="text-sm md:text-base font-bold tracking-wide">{label}</span>
-      <ChevronRight size={16} className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+      <span className="text-[11px] sm:text-sm md:text-base font-bold tracking-wide">{label}</span>
+      <ChevronRight size={16} className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
     </Link>
   );
 }
@@ -192,11 +192,11 @@ function StatCard({ icon, label, value, color }: { icon: React.ReactNode; label:
     purple: 'bg-gradient-to-br from-purple-50 to-fuchsia-50 text-purple-600 border-purple-100',
   };
   return (
-    <div className="bg-white/80 backdrop-blur-xl rounded-3xl border border-white/40 shadow-lg shadow-gray-200/30 p-6 flex items-center gap-5 transition-transform hover:-translate-y-1 duration-300">
-      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-sm border ${styles[color]} flex-shrink-0`}>{icon}</div>
+    <div className="bg-white/80 backdrop-blur-xl rounded-2xl md:rounded-3xl border border-white/40 shadow-sm sm:shadow-lg shadow-gray-200/30 p-4 sm:p-6 flex items-center gap-3 sm:gap-5 transition-transform hover:-translate-y-1 duration-300">
+      <div className={`w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-sm border ${styles[color]} flex-shrink-0 [&>svg]:w-5 [&>svg]:h-5 sm:[&>svg]:w-6 sm:[&>svg]:h-6`}>{icon}</div>
       <div>
-        <p className="text-2xl lg:text-3xl font-black text-gray-900 tracking-tight">{value}</p>
-        <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mt-1">{label}</p>
+        <p className="text-lg sm:text-2xl lg:text-3xl font-black text-gray-900 tracking-tight">{value}</p>
+        <p className="text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-wider mt-0.5 sm:mt-1">{label}</p>
       </div>
     </div>
   );
