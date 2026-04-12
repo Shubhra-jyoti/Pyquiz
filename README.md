@@ -172,4 +172,7 @@ The platform is structured for AI provider integration:
 
 ## License
 
-For educational use. Practice book content belongs to L.J. University.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+*Disclaimer: Practice book content used for educational logic belongs to L.J. University.*
+
