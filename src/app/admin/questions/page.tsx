@@ -17,7 +17,7 @@ export default function AdminQuestionsPage() {
   const [chapters, setChapters] = useState<any[]>([]);
   const [editing, setEditing] = useState<any>(null);
   const [creating, setCreating] = useState(false);
-  const [newQuestion, setNewQuestion] = useState({
+  const [newQuestion, setNewQuestion] = useState<any>({
     chapterId: '',
     type: 'MCQ',
     marks: 1,
