@@ -4,7 +4,7 @@ import { useAuth } from '@/lib/auth-context';
 import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import QuestionText from '@/components/QuestionText';
-import { Play, Send, Bot, Copy, Check, ArrowLeft, BookOpen, Loader2, Code2, Star } from 'lucide-react';
+import { Play, Send, Bot, Copy, Check, ArrowLeft, BookOpen, Loader2, Code2, Star, Tag, Link as LinkIcon, FileText } from 'lucide-react';
 import Editor from '@monaco-editor/react';
 
 export default function CodingPracticePage() {
