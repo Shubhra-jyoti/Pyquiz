@@ -173,7 +173,49 @@ sys.stderr = StringIO()
               <span className="text-sm font-medium text-blue-600">Question</span>
             </div>
             {question ? (
-              <QuestionText text={question.questionText} />
+              <div className="space-y-6">
+                <QuestionText text={question.questionText} />
+                
+                {/* Attachments / Resources */}
+                {question.attachments && (question.attachments as any[]).length > 0 && (
+                  <div className="pt-6 border-t border-gray-100">
+                    <div className="flex items-center gap-2 mb-4">
+                      <Tag size={16} className="text-gray-400" />
+                      <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Resources & Data Files</span>
+                    </div>
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      {(question.attachments as any[]).map((att, idx) => {
+                        const isImage = att.type === 'IMAGE';
+                        return (
+                          <div key={idx} className="group relative bg-gray-50 rounded-xl border border-gray-100 overflow-hidden hover:border-blue-200 transition-all">
+                            {isImage ? (
+                              <div className="space-y-2">
+                                <div className="aspect-video relative overflow-hidden bg-white">
+                                  <img src={att.url} alt={att.name} className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-500" />
+                                </div>
+                                <div className="p-3 flex items-center justify-between">
+                                  <span className="text-xs font-medium text-gray-700 truncate">{att.name || 'Reference Image'}</span>
+                                  <a href={att.url} target="_blank" rel="noopener noreferrer" className="p-1 px-2 text-[10px] bg-white border rounded shadow-sm text-blue-600 hover:bg-blue-50">View Full</a>
+                                </div>
+                              </div>
+                            ) : (
+                              <a href={att.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 text-sm h-full hover:bg-white transition-colors">
+                                <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                  {att.type === 'CSV' ? <FileText size={18} className="text-blue-600" /> : att.type === 'PDF' ? <BookOpen size={18} className="text-red-500" /> : <LinkIcon size={18} className="text-gray-500" />}
+                                </div>
+                                <div className="min-w-0">
+                                  <p className="font-semibold text-gray-800 truncate leading-tight">{att.name || 'Dataset'}</p>
+                                  <p className="text-[10px] text-gray-400 font-medium uppercase">{att.type} File</p>
+                                </div>
+                              </a>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
             ) : (
               <div className="h-20 bg-gray-100 rounded animate-pulse" />
             )}

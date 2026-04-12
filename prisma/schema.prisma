@@ -52,6 +52,7 @@ model Question {
   rawExtracted  String?
   pageNumber    Int     @default(0)
   tags          String?
+  attachments   Json?
 
   chapter       Chapter          @relation(fields: [chapterId], references: [id])
   options       MCQOption[]

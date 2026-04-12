@@ -3,7 +3,7 @@
 import { useAuth } from '@/lib/auth-context';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Edit3, Eye, EyeOff, Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Edit3, Eye, EyeOff, Search, ChevronLeft, ChevronRight, Plus, Trash2, Link as LinkIcon, Image as ImageIcon, FileText } from 'lucide-react';
 
 export default function AdminQuestionsPage() {
   const { user, loading } = useAuth();
@@ -28,7 +28,8 @@ export default function AdminQuestionsPage() {
       { label: 'B', text: '' },
       { label: 'C', text: '' },
       { label: 'D', text: '' },
-    ]
+    ],
+    attachments: []
   });
   const [loadingQ, setLoadingQ] = useState(true);
 
@@ -179,17 +180,67 @@ export default function AdminQuestionsPage() {
                   }} className="flex-1 px-3 py-1.5 border rounded-lg text-sm" />
                 </div>
               ))}
-              <div className="flex gap-3">
+              {/* Attachments Section */}
+              <div className="border-t pt-4">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-sm font-bold text-gray-700">Attachments / Resources</label>
+                  <button onClick={() => {
+                    const current = editing.attachments || [];
+                    setEditing({ ...editing, attachments: [...current, { name: '', url: '', type: 'IMAGE' }] });
+                  }} className="text-xs text-blue-600 flex items-center gap-1 hover:underline">
+                    <Plus size={12} /> Add Resource
+                  </button>
+                </div>
+                <div className="space-y-2">
+                  {(editing.attachments || []).map((att: any, idx: number) => (
+                    <div key={idx} className="flex gap-2 items-start bg-gray-50 p-2 rounded-lg border border-gray-100">
+                      <div className="flex-1 space-y-2">
+                        <input value={att.name} onChange={e => {
+                          const newAtts = [...editing.attachments];
+                          newAtts[idx].name = e.target.value;
+                          setEditing({ ...editing, attachments: newAtts });
+                        }} placeholder="Label (e.g. data.csv)" className="w-full px-2 py-1 text-xs border rounded" />
+                        <input value={att.url} onChange={e => {
+                          const newAtts = [...editing.attachments];
+                          newAtts[idx].url = e.target.value;
+                          setEditing({ ...editing, attachments: newAtts });
+                        }} placeholder="External URL" className="w-full px-2 py-1 text-xs border rounded" />
+                      </div>
+                      <select value={att.type} onChange={e => {
+                        const newAtts = [...editing.attachments];
+                        newAtts[idx].type = e.target.value;
+                        setEditing({ ...editing, attachments: newAtts });
+                      }} className="text-[10px] border rounded px-1 py-1">
+                        <option value="IMAGE">Image</option>
+                        <option value="CSV">CSV</option>
+                        <option value="PDF">PDF</option>
+                        <option value="OTHER">Other</option>
+                      </select>
+                      <button onClick={() => {
+                        const newAtts = editing.attachments.filter((_: any, i: number) => i !== idx);
+                        setEditing({ ...editing, attachments: newAtts });
+                      }} className="p-1 text-red-400 hover:text-red-600">
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex gap-3 mt-6">
                 <button onClick={async () => {
                   await fetch('/api/admin/questions', {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id: editing.id, questionText: editing.questionText }),
+                    body: JSON.stringify({ 
+                      id: editing.id, 
+                      questionText: editing.questionText,
+                      attachments: editing.attachments
+                    }),
                   });
                   setEditing(null);
-                  // Refresh
                   setPage(page);
-                }} className="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm">Save Changes</button>
+                }} className="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-medium">Save Changes</button>
                 <button onClick={() => setEditing(null)} className="px-4 py-2 border rounded-xl text-sm">Cancel</button>
               </div>
             </div>
@@ -251,6 +302,52 @@ export default function AdminQuestionsPage() {
                   <p className="text-xs text-gray-500 mt-1">Select the radio button next to the correct answer.</p>
                 </div>
               )}
+
+              {/* Attachments Section (In Create) */}
+              <div className="border-t pt-4">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-sm font-bold text-gray-700">Attachments / Resources</label>
+                  <button onClick={() => {
+                    setNewQuestion({ ...newQuestion, attachments: [...(newQuestion.attachments || []), { name: '', url: '', type: 'IMAGE' }] });
+                  }} className="text-xs text-blue-600 flex items-center gap-1 hover:underline">
+                    <Plus size={12} /> Add Resource
+                  </button>
+                </div>
+                <div className="space-y-2">
+                  {(newQuestion.attachments || []).map((att: any, idx: number) => (
+                    <div key={idx} className="flex gap-2 items-start bg-gray-50 p-2 rounded-lg border border-gray-100">
+                      <div className="flex-1 space-y-2">
+                        <input value={att.name} onChange={e => {
+                          const newAtts = [...newQuestion.attachments];
+                          newAtts[idx].name = e.target.value;
+                          setNewQuestion({ ...newQuestion, attachments: newAtts });
+                        }} placeholder="Label (e.g. data.csv)" className="w-full px-2 py-1 text-xs border rounded" />
+                        <input value={att.url} onChange={e => {
+                          const newAtts = [...newQuestion.attachments];
+                          newAtts[idx].url = e.target.value;
+                          setNewQuestion({ ...newQuestion, attachments: newAtts });
+                        }} placeholder="External URL" className="w-full px-2 py-1 text-xs border rounded" />
+                      </div>
+                      <select value={att.type} onChange={e => {
+                        const newAtts = [...newQuestion.attachments];
+                        newAtts[idx].type = e.target.value;
+                        setNewQuestion({ ...newQuestion, attachments: newAtts });
+                      }} className="text-[10px] border rounded px-1 py-1">
+                        <option value="IMAGE">Image</option>
+                        <option value="CSV">CSV</option>
+                        <option value="PDF">PDF</option>
+                        <option value="OTHER">Other</option>
+                      </select>
+                      <button onClick={() => {
+                        const newAtts = newQuestion.attachments.filter((_: any, i: number) => i !== idx);
+                        setNewQuestion({ ...newQuestion, attachments: newAtts });
+                      }} className="p-1 text-red-400 hover:text-red-600">
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
               <div className="flex gap-3 pt-4 border-t">
                 <button onClick={async () => {
