@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import QuestionText from '@/components/QuestionText';
 import { Play, Send, Bot, Copy, Check, ArrowLeft, BookOpen, Loader2, Code2, Star } from 'lucide-react';
+import Editor from '@monaco-editor/react';
 
 export default function CodingPracticePage() {
   const { user, loading } = useAuth();
@@ -62,8 +63,11 @@ export default function CodingPracticePage() {
       return;
     }
     setRunning(true);
-    setOutput('');
+    setOutput('⏳ Preparing environment and checking imports...');
     try {
+      // Auto-load required packages (numpy, pandas, etc.)
+      await pyodide.loadPackagesFromImports(code);
+
       pyodide.runPython(`
 import sys
 from io import StringIO
@@ -73,9 +77,9 @@ sys.stderr = StringIO()
       pyodide.runPython(code);
       const stdout = pyodide.runPython('sys.stdout.getvalue()');
       const stderr = pyodide.runPython('sys.stderr.getvalue()');
-      setOutput(stdout + (stderr ? '\n⚠️ ' + stderr : ''));
+      setOutput(stdout + (stderr ? '\n⚠️ Error Output:\n' + stderr : ''));
     } catch (err: any) {
-      setOutput('❌ Error: ' + (err.message || String(err)));
+      setOutput('❌ Runtime Error: ' + (err.message || String(err)));
     }
     setRunning(false);
   };
@@ -139,19 +143,6 @@ sys.stderr = StringIO()
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Tab') {
-      e.preventDefault();
-      const target = e.target as HTMLTextAreaElement;
-      const start = target.selectionStart;
-      const end = target.selectionEnd;
-      setCode(code.substring(0, start) + '    ' + code.substring(end));
-      setTimeout(() => {
-        target.selectionStart = target.selectionEnd = start + 4;
-      }, 0);
-    }
-  };
-
   if (loading || !user) return null;
 
   return (
@@ -189,16 +180,19 @@ sys.stderr = StringIO()
           </div>
 
           {/* Output */}
-          <div className="bg-[#1e293b] rounded-2xl p-4 sm:p-5 min-h-[100px] sm:min-h-[120px]">
-            <p className="text-xs text-gray-400 mb-2 font-mono">OUTPUT</p>
-            <pre className="text-xs sm:text-sm text-green-400 font-mono whitespace-pre-wrap break-words">
-              {output || '// Run your code to see output here'}
+          <div className="bg-[#0f172a] rounded-2xl p-4 sm:p-5 min-h-[140px] border border-gray-800 shadow-inner">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-[10px] text-gray-400 font-mono uppercase tracking-widest">Console Output</p>
+              {running && <Loader2 size={12} className="text-blue-400 animate-spin" />}
+            </div>
+            <pre className="text-xs sm:text-sm text-gray-300 font-mono whitespace-pre-wrap break-words leading-relaxed">
+              {output || '# Output will appear here after execution...'}
             </pre>
           </div>
 
           {/* AI Review */}
           {aiReview && !aiReview.error && (
-            <div className="bg-white rounded-2xl border border-blue-200 p-4 sm:p-6 fade-in">
+            <div className="bg-white rounded-2xl border border-blue-200 p-4 sm:p-6 shadow-sm fade-in">
               <div className="flex items-center gap-2 mb-3 flex-wrap">
                 <Bot size={18} className="text-blue-600" />
                 <span className="font-semibold text-blue-600">AI Review</span>
@@ -213,11 +207,11 @@ sys.stderr = StringIO()
               <p className="text-sm text-gray-700 mb-3">{aiReview.feedback}</p>
               {aiReview.improvements?.length > 0 && (
                 <div className="mt-3">
-                  <p className="text-xs font-semibold text-gray-500 mb-1.5">Improvements:</p>
+                  <p className="text-xs font-semibold text-gray-500 mb-1.5 uppercase">Constructive Feedback:</p>
                   <ul className="space-y-1">
                     {aiReview.improvements.map((imp: string, i: number) => (
                       <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
-                        <span className="text-blue-400 mt-1 flex-shrink-0">•</span>
+                        <span className="text-blue-400 mt-1 flex-shrink-0 text-lg">💡</span>
                         <span>{imp}</span>
                       </li>
                     ))}
@@ -232,73 +226,99 @@ sys.stderr = StringIO()
 
           {/* AI Solution */}
           {showSolution && aiSolution && (
-            <div className="bg-white rounded-2xl border border-green-200 p-4 sm:p-6 fade-in">
+            <div className="bg-white rounded-2xl border border-green-200 p-4 sm:p-6 shadow-sm fade-in">
               <div className="flex items-center justify-between mb-3">
                 <span className="font-semibold text-green-700 flex items-center gap-2">
-                  <Bot size={16} /> AI Solution
+                  <Bot size={16} /> Reference Solution
                 </span>
                 <button onClick={() => copyCode(aiSolution)} className="flex items-center gap-1 text-xs text-green-600 hover:text-green-700">
                   {copied ? <Check size={14} /> : <Copy size={14} />}
                   {copied ? 'Copied!' : 'Copy'}
                 </button>
               </div>
-              <pre className="bg-gray-900 text-green-400 rounded-xl p-3 sm:p-4 text-xs sm:text-sm font-mono overflow-x-auto whitespace-pre-wrap break-words">{aiSolution}</pre>
+              <pre className="bg-gray-900 text-green-400 rounded-xl p-3 sm:p-4 text-xs sm:text-sm font-mono overflow-x-auto whitespace-pre-wrap break-words border border-green-900/30">{aiSolution}</pre>
             </div>
           )}
         </div>
 
         {/* Right - Code Editor */}
         <div className="space-y-4">
-          <div className="code-editor-container">
-            <div className="bg-[#1e293b] px-4 py-2 flex items-center justify-between">
-              <span className="text-xs text-gray-400 font-mono">main.py</span>
-              <div className="flex items-center gap-1">
-                <div className="w-3 h-3 rounded-full bg-red-500" />
-                <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                <div className="w-3 h-3 rounded-full bg-green-500" />
+          <div className="rounded-2xl border border-gray-800 overflow-hidden bg-[#1e293b] shadow-2xl">
+            <div className="bg-[#1e293b] px-4 py-3 flex items-center justify-between border-b border-gray-800">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                  <Code2 size={16} className="text-blue-400" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-gray-200 leading-tight">main.py</p>
+                  <p className="text-[10px] text-gray-500 leading-tight font-mono">Python 3.11</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
+                <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
+                <div className="w-2.5 h-2.5 rounded-full bg-green-500/80" />
               </div>
             </div>
-            <textarea
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              onKeyDown={handleKeyDown}
-              className="w-full bg-[#0f172a] text-gray-100 font-mono text-xs sm:text-sm p-3 sm:p-4 outline-none resize-none"
-              style={{ minHeight: '300px', tabSize: 4 }}
-              spellCheck={false}
-            />
+            <div className="editor-wrapper min-h-[400px]">
+              <Editor
+                height="450px"
+                language="python"
+                theme="vs-dark"
+                value={code}
+                onChange={(v) => setCode(v || '')}
+                options={{
+                  minimap: { enabled: false },
+                  scrollBeyondLastLine: false,
+                  fontSize: 14,
+                  padding: { top: 20 },
+                  fontFamily: "'Fira Code', 'Cascadia Code', monospace",
+                  fontLigatures: true,
+                  lineNumbers: 'on',
+                  renderLineHighlight: 'all',
+                  scrollbar: {
+                    vertical: 'hidden',
+                    horizontal: 'hidden'
+                  },
+                  automaticLayout: true,
+                  contextmenu: false,
+                  quickSuggestions: true,
+                }}
+              />
+            </div>
           </div>
 
           {/* Action buttons */}
           <div className="grid grid-cols-2 gap-3">
             <button onClick={runCode} disabled={running || !pyodideReady}
-              className="flex items-center justify-center gap-2 px-3 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-xl font-medium transition-colors disabled:opacity-50 text-sm">
+              className="flex items-center justify-center gap-2 px-3 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-xl font-medium transition-colors border-b-4 border-green-800 active:border-b-0 active:translate-y-1 disabled:opacity-50 text-sm shadow-lg">
               {running ? <Loader2 size={16} className="animate-spin" /> : <Play size={16} />}
-              {running ? 'Running...' : pyodideReady ? 'Run' : 'Loading...'}
+              {running ? 'Running...' : pyodideReady ? 'Run Code' : 'Loading...'}
             </button>
             <button onClick={submitCode}
-              className="flex items-center justify-center gap-2 px-3 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-colors text-sm">
+              className="flex items-center justify-center gap-2 px-3 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-colors border-b-4 border-blue-800 active:border-b-0 active:translate-y-1 text-sm shadow-lg">
               {submitted ? <Check size={16} /> : <Send size={16} />}
-              {submitted ? 'Saved!' : 'Submit'}
+              {submitted ? 'Code Saved!' : 'Submit Task'}
             </button>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <button onClick={reviewWithAI} disabled={loadingReview || !code.trim()}
-              className="flex items-center justify-center gap-2 px-3 py-2.5 border-2 border-blue-300 text-blue-700 rounded-xl text-sm font-medium hover:bg-blue-50 transition-colors disabled:opacity-50">
+              className="flex items-center justify-center gap-2 px-3 py-2.5 bg-white border-2 border-blue-100 text-blue-700 rounded-xl text-sm font-semibold hover:bg-blue-50 transition-all shadow-sm disabled:opacity-50">
               {loadingReview ? <Loader2 size={14} className="animate-spin" /> : <Bot size={14} />}
-              {loadingReview ? 'Reviewing...' : 'AI Review'}
+              {loadingReview ? 'Analyzing...' : 'AI Code Review'}
             </button>
             <button onClick={getAISolution} disabled={loadingSolution}
-              className="flex items-center justify-center gap-2 px-3 py-2.5 border-2 border-green-300 text-green-700 rounded-xl text-sm font-medium hover:bg-green-50 transition-colors disabled:opacity-50">
+              className="flex items-center justify-center gap-2 px-3 py-2.5 bg-white border-2 border-emerald-100 text-emerald-700 rounded-xl text-sm font-semibold hover:bg-emerald-50 transition-all shadow-sm disabled:opacity-50">
               {loadingSolution ? <Loader2 size={14} className="animate-spin" /> : <Bot size={14} />}
-              {loadingSolution ? 'Generating...' : 'AI Solution'}
+              {loadingSolution ? 'Generating...' : 'View Solution'}
             </button>
           </div>
 
           {!pyodideReady && (
-            <div className="text-center p-3 bg-blue-50 rounded-xl text-xs sm:text-sm text-blue-600 flex items-center justify-center gap-2">
+            <div className="py-2.5 px-4 bg-blue-50/50 border border-blue-100 rounded-xl text-xs sm:text-sm text-blue-600 flex items-center justify-center gap-3 backdrop-blur-sm">
               <Loader2 size={14} className="animate-spin" />
-              Loading Python runtime (Pyodide)...
+              Initialising Python Sandbox (Pyodide)...
             </div>
           )}
         </div>
