@@ -6,6 +6,7 @@ export async function PATCH(req: NextRequest) {
   const user = await getAuthUser(req);
   if (!user || user.role !== 'ADMIN') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
+  const body = await req.json();
   const { id, questionText, published, chapterId, difficulty, attachments } = body;
 
   if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 });
@@ -15,7 +16,7 @@ export async function PATCH(req: NextRequest) {
   if (published !== undefined) updateData.published = published;
   if (chapterId !== undefined) updateData.chapterId = chapterId;
   if (difficulty !== undefined) updateData.difficulty = difficulty;
-  if (attachments !== undefined) updateData.attachments = attachments;
+  if (attachments !== undefined) updateData.attachments = attachments as any;
 
   const updated = await prisma.question.update({
     where: { id },
@@ -70,9 +71,9 @@ export async function POST(req: NextRequest) {
         questionText,
         type,
         marks: parseInt(marks),
-        confidence: 1.0, 
+        confidence: 1.0,
         published: true,
-        attachments: attachments || null,
+        attachments: (attachments as any) || null,
         options: createdOptions,
         verification: {
           create: {
